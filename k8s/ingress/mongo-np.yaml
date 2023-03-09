@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongo-network-policy
+  namespace: mongo
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: mongo
+    - podSelector:
+        matchLabels:
+          app: mongo-handler
+    ports:
+    - protocol: TCP
+      port: 9539
+  - from:
+    - namespaceSelector:
+        matchLabels:
+        kubernetes.io/metadata.name: mongo
+    - podSelector:
+        matchLabels:
+          app: mongo-db
+    ports:
+      - protocol: TCP
+        port: 9374
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+        kubernetes.io/metadata.name: mongo
+    - podSelector:
+        matchLabels:
+          app: mongo-db
+    ports:
+      - protocol: TCP
+        port: 9374
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: mongo
+    - podSelector:
+        matchLabels:
+          app: mongo-handler
+    ports:
+    - protocol: TCP
+      port: 9539

@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mlflow-notebook-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /insert
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-handler-svc
+            port:
+              number: 9374
+      - path: /update
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-handler-svc
+            port:
+              number: 9374
+      - path: /delete
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-handler-svc
+            port:
+              number: 9374
+      - path: /fetch
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-handler-svc
+            port:
+              number: 9374
+      - path: /search
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-handler-svc
+            port:
+              number: 9374

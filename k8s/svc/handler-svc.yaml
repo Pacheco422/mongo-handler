@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-handler-svc
+  namespace: mongo
+spec:
+  selector:
+    app: mongo-handler
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9539
+    targetPort: 9539

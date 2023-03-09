@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-insert
+  namespace: mongo
+spec:
+  activeDeadlineSeconds: 900
+  template:
+    spec:
+      serviceAccountName: mongo
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: test-insert
+        image: curl
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - -c
+        - |
+          DATE=`date +%s` &&
+          curl -X POST http://mongo-handler-svc:9539/insert \
+          -H 'Content-Type: application/json' \
+          -d '{"Id":"a12345","Name":"product_1","Price": "$42.42", "Date": "$DATE","Tags": ""}'
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 20001
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+      restartPolicy: Never

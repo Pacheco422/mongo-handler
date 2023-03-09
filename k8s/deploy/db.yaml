@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-db
+  namespace: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-db
+  template:
+    metadata:
+      labels:
+        app: mongo-db
+    spec:
+      serviceAccountName: mongo
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: mongo-db
+        image: mongo-db
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "300m"
+          limits:
+            memory: "3000Mi"
+            cpu: "1000m"
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 20001
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /data/db
+          name: data-vol
+      volumes:
+      - name: data-vol
+        emptyDir: {}
